@@ -12,9 +12,6 @@ jobs:
     - name: Check out the code
       uses: actions/checkout@v3
 
-    - name: Set up GitHub CLI
-      uses: cli/gh-actions@v1
-
     - name: Add PR to Project V2
       run: |
         PR_ID=$(gh pr view --json id -q .id)
@@ -24,4 +21,4 @@ jobs:
           -F "content_type=PullRequest" \
           -F "project_id=$PROJECT_ID"
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.Lesords }}
