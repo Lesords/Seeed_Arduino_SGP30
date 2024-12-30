@@ -15,9 +15,15 @@ jobs:
     - name: Add PR to Project V2
       run: |
         PROJECT_ID="3"
-        url=${{ github.event.pull_request.html_url }}
-        echo "$PROJECT_ID, $url"
-        gh project item-add $PROJECT_ID --owner Lesords --url "$url"
+        echo "$PR_ID, $PR_ID_2"
+        gh api graphql -f query='
+          mutation($project:ID!, $pr:ID!) {
+            addProjectV2ItemById(input: {projectId: $project, contentId: $pr}) {
+              item {
+                id
+              }
+            }
+          }' -f project=$PROJECT_ID -f pr=$PR_ID --jq '.data.addProjectV2ItemById.item.id'
       env:
         GITHUB_TOKEN: ${{ secrets.Lesords }}
         PR_ID: ${{ github.event.pull_request.node_id }}
