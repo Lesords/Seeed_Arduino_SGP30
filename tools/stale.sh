@@ -35,15 +35,17 @@ function main() {
     issue_list=$(gh issue list --json number --jq '.[].number' --limit 1000)
 
     for issue in $issue_list; do
+        echo " " && echo -e "\e[33mProcessing $issue\e[0m"
+
         is_stale=$(gh issue view $issue --json labels --jq "(.labels[] | select(.name == \"$label\")).name")
         last_comment=$(gh issue view "$issue" --json comments --jq '.comments[-1]')
 
         if [ -z "$last_comment" ]; then
+            echo "No comments on this issue"
+
             create_time=$(gh issue view $issue --json createdAt --jq ".createdAt")
             dis_time=$(getTimeDiff $create_time)
 
-            echo "[debug] createdAt: $create_time"
-            echo "[debug] dis_time: $dis_time - $((dis_time / 60 / 60))"
             if [ "$dis_time" -gt "$time_before_issue_stale" ]; then
                 commentAndLabel
             fi
@@ -52,10 +54,6 @@ function main() {
 
         last_comment_time=$(echo "$last_comment" | jq -r '.createdAt')
         dis_time=$(getTimeDiff $last_comment_time)
-
-        echo "[debug] last_comment_time: $last_comment_time"
-        echo "[debug] comment_time: $comment_time"
-        echo "[debug] dis_time: $dis_time - $((dis_time / 60 / 60))"
 
         if [ "$is_stale" ]; then
             if [ "$dis_time" -gt "$time_before_issue_close" ]; then

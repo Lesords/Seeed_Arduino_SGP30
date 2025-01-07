@@ -20,6 +20,6 @@ jobs:
             path: ci
 
       - name: Run script
-        run: ./tools/stale.sh
+        run: ./ci/tools/stale.sh
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
